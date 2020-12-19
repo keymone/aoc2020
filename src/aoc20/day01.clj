@@ -11,12 +11,19 @@
 
 (def real-input (read-string (str "[" (slurp (io/resource "day01.txt")) "]")))
 
-(defn sum-2020 [a b] (= (+ a b) 2020))
+(defn sum-c [a b c] (= (+ a b) c))
 
-(defn mul-2020 [input]
+(defn mul-sum-2 [input sum]
   (loop [[head & rest] input]
-    (if-let [compl (filter #(sum-2020 head %) rest)]
-      (* head (first compl))
+    (if-not (empty? rest)
+      (let [[compl] (filter #(sum-c head % sum) rest)]
+        (if compl (* head compl) (recur rest))))))
+
+(defn mul-sum-3 [input]
+  (loop [[head & rest] input]
+    (if-let [mul (mul-sum-2 rest (- 2020 head))]
+      (* mul head)
       (recur rest))))
 
-(mul-2020 demo-input)
+(mul-sum-2 real-input 2020)
+(mul-sum-3 real-input)
